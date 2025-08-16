@@ -7,15 +7,17 @@
 
 #include <unordered_map>
 #include <vector>
+#include <GLES3/gl32.h>
 
-#include "Math/Vector3.h"
-#include "Graphics/Color.h"
-#include "Components/Component.h"
+#include "../Components/Component.h"
+#include "../Utils/Shader.h"
+
+#include "../glm/glm.hpp"
+#include "../glm/gtc/matrix_transform.hpp"
+#include "../glm/gtc/type_ptr.hpp"
 
 class Entity {
 public:
-    Entity();
-
     int id;
 
     std::string title;
@@ -23,16 +25,18 @@ public:
 
     bool isVisible;
 
-    std::vector<float> vertices;
+    glm::mat4 model;
+
+    GLuint VAO, VBO, EBO;
+    GLuint vertexShader, fragmentShader, shaderProgram;
+
+    float vertices[0];
+    unsigned int drawOrder[0];
 
     std::unordered_map<int, Component> components;
 
-    Graphics::Color color = Graphics::Color("#FF8000");
-
-    void draw();
-
+    virtual void draw() = 0;
 private:
-
 };
 
 

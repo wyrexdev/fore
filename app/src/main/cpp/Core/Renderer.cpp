@@ -4,19 +4,23 @@
 
 #include "Renderer.h"
 
-#include <vector>
-#include <string>
+#include "../Utils/Surface.h"
+
+#include <GLES3/gl32.h>
+#include <android/log.h>
 
 void Renderer::init() {
-
+    glEnable(GL_DEPTH_TEST);
 }
 
-void Renderer::resize(int &width, int &height) {
+void Renderer::resize(int width, int height) {
+    Surface::width = width;
+    Surface::height = height;
+
     glViewport(0, 0, width, height);
 }
 
 void Renderer::draw() {
-    glClearColor(1, 0, 0, 1);
-
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
