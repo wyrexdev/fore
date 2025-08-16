@@ -54,9 +54,16 @@ void Cube::draw() {
         float time = getTime();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -8.0f, -4.0f));
-        model = glm::scale(model, glm::vec3(4, 0.1f, 3));
-        // model = glm::rotate(model, time, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        model = glm::translate(model, glm::vec3(position.x, position.y, position.z));
+
+        glm::vec3 radians = glm::radians(glm::vec3(rotation.x, rotation.y, rotation.z));
+
+        model = glm::rotate(model, radians.x, glm::vec3(1,0,0));
+        model = glm::rotate(model, radians.y, glm::vec3(0,1,0));
+        model = glm::rotate(model, radians.z, glm::vec3(0,0,1));
+
+        model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
 
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), Surface::width/Surface::height, 0.1f, 100.0f);

@@ -5,9 +5,7 @@
 #ifndef FORE_MESHCOMPONENT_H
 #define FORE_MESHCOMPONENT_H
 
-#include "../Component.h"
-
-class MeshComponent : public Component {
+class MeshComponent {
 
 };
 

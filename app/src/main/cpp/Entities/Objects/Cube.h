@@ -48,7 +48,6 @@ public:
     GLuint compile(GLenum type, const char* src);
     GLuint link(GLuint vs, GLuint fs);
 private:
-
 };
 
 

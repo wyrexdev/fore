@@ -33,10 +33,16 @@ public:
     float vertices[0];
     unsigned int drawOrder[0];
 
-    std::unordered_map<int, Component> components;
+    std::unordered_map<int, Component*> components;
+    void addComponent(Component *comp);
 
     virtual void draw() = 0;
+
+    glm::vec3 position = glm::vec3(0, 0, 0);;
+    glm::vec3 rotation = glm::vec3(0, 0, 0);;
+    glm::vec3 scale = glm::vec3(1, 1, 1);
 private:
+    int nextKey = 1;
 };
 
 
