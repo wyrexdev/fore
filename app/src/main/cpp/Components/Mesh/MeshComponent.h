@@ -5,8 +5,18 @@
 #ifndef FORE_MESHCOMPONENT_H
 #define FORE_MESHCOMPONENT_H
 
-class MeshComponent {
+#include "../Component.h"
 
+#include "./Primitives/Primitive.h"
+
+#include "./Primitives/Cube/Cube.h"
+#include "./Primitives/Sphere/Sphere.h"
+
+class MeshComponent : public Component {
+public:
+    MeshComponent() { type = "MeshComponent"; };
+
+    void setMesh(const Primitive *mesh);
 };
 
 

@@ -10,14 +10,22 @@
 #include <GLES3/gl32.h>
 
 #include "../Components/Component.h"
+
 #include "../Utils/Shader.h"
+#include "../Utils/Surface.h"
+
+#include "./Objects/Camera.h"
 
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
 #include "../glm/gtc/type_ptr.hpp"
 
+extern Camera camera;
+
 class Entity {
 public:
+    Entity();
+
     int id;
 
     std::string title;
@@ -30,13 +38,14 @@ public:
     GLuint VAO, VBO, EBO;
     GLuint vertexShader, fragmentShader, shaderProgram;
 
-    float vertices[0];
-    unsigned int drawOrder[0];
+    std::vector<float> vertices;
+    std::vector<unsigned int> drawOrder;
 
     std::unordered_map<int, Component*> components;
     void addComponent(Component *comp);
 
-    virtual void draw() = 0;
+    void updateBuffers();
+    void draw();
 
     glm::vec3 position = glm::vec3(0, 0, 0);;
     glm::vec3 rotation = glm::vec3(0, 0, 0);;

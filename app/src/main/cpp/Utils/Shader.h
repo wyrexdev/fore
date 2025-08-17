@@ -45,5 +45,42 @@ static const GLchar* fragmentShaderCode =
         "    fragColor = vec4(color, 1.0);\n"
         "}";
 
+static GLuint compile(GLenum type, const char* src) {
+    GLuint s = glCreateShader(type);
+    glShaderSource(s, 1, &src, nullptr);
+    glCompileShader(s);
+    GLint ok;
+    glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
+    if(!ok){
+        GLint len;
+        glGetShaderiv(s, GL_INFO_LOG_LENGTH, &len);
+        std::vector<char> log(len);
+        glGetShaderInfoLog(s, len, nullptr, log.data());
+        glDeleteShader(s);
+        throw std::runtime_error(log.data());
+    }
+    return s;
+}
+
+static GLuint link(GLuint vs, GLuint fs) {
+    GLuint p = glCreateProgram();
+    glAttachShader(p, vs);
+    glAttachShader(p, fs);
+    glLinkProgram(p);
+    GLint ok;
+    glGetProgramiv(p, GL_LINK_STATUS, &ok);
+    if(!ok){
+        GLint len;
+        glGetProgramiv(p, GL_INFO_LOG_LENGTH, &len);
+        std::vector<char> log(len);
+        glGetProgramInfoLog(p, len, nullptr, log.data());
+        glDeleteProgram(p);
+        throw std::runtime_error(log.data());
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return p;
+}
+
 
 #endif //FORE_SHADER_H

@@ -8,4 +8,5 @@ object NativeBridge {
     external fun onSurfaceCreated()
     external fun onSurfaceChanged(width: Int, height: Int)
     external fun onDrawFrame()
+    external fun onCalculateFPS(): Int
 }

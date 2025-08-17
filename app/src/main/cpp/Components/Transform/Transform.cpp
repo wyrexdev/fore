@@ -7,7 +7,7 @@
 #include "../../Entities/Entity.h"
 
 void Transform::setPosition(float x, float y, float z) {
-    entity->rotation = glm::vec3(x, y, z);
+    entity->position = glm::vec3(x, y, z);
 }
 
 void Transform::setRotate(float x, float y, float z) {
