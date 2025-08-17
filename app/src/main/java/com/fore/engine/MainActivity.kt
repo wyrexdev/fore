@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        NativeBridge.initAssetManager(assets)
+
         var fps: TextView = findViewById(R.id.fps)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE

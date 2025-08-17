@@ -43,9 +43,15 @@ public:
 
                 x = xy * cosf(sectorAngle);
                 y = xy * sinf(sectorAngle);
+
+                s = (float)j / sectorCount;
+                t = (float)i / stackCount;
+
                 vertices.push_back(x);
                 vertices.push_back(y);
                 vertices.push_back(z);
+                vertices.push_back(s);
+                vertices.push_back(t);
             }
         }
 

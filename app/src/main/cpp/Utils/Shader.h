@@ -10,8 +10,10 @@
 static const GLchar* vertexShaderCode =
         "#version 320 es\n"
         "layout(location = 0) in vec3 aPos;\n"
+        "layout(location = 1) in vec2 aTexCoord;\n"
         "\n"
         "out vec3 vPos;\n"
+        "out vec2 TexCoord;\n"
         "\n"
         "uniform mat4 uModel;\n"
         "uniform mat4 uView;\n"
@@ -21,6 +23,7 @@ static const GLchar* vertexShaderCode =
         "    vec4 worldPos = uModel * vec4(aPos, 1.0);\n"
         "    vPos = (uView * worldPos).xyz;\n"
         "    gl_Position = uProj * uView * worldPos;\n"
+        "    TexCoord = aTexCoord;\n"
         "}";
 
 static const GLchar* fragmentShaderCode =
@@ -28,11 +31,14 @@ static const GLchar* fragmentShaderCode =
         "precision mediump float;\n"
         "\n"
         "in vec3 vPos;\n"
+        "in vec2 TexCoord;\n"
         "\n"
         "out vec4 fragColor;\n"
         "\n"
         "uniform vec3 vCol;\n"
         "uniform vec3 lightDir;\n"
+        "uniform bool useMaterial;\n"
+        "uniform sampler2D oTexture;\n"
         "\n"
         "void main() {\n"
         "    vec3 dx = dFdx(vPos);\n"
@@ -42,7 +48,12 @@ static const GLchar* fragmentShaderCode =
         "    float diff = max(dot(normal, normalize(-lightDir)), 0.0);\n"
         "    vec3 color = vCol * diff + vCol * 0.2;\n"
         "\n"
-        "    fragColor = vec4(color, 1.0);\n"
+        "    if(useMaterial) {\n"
+        "       vec4 textureColor = texture(oTexture, TexCoord);\n"
+        "       fragColor = vec4(color, 1.0) * textureColor;\n"
+        "    } else {\n"
+        "       fragColor = vec4(color, 1.0);\n"
+        "    }\n"
         "}";
 
 static GLuint compile(GLenum type, const char* src) {

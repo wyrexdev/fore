@@ -4,6 +4,10 @@
 
 #include "Material.h"
 
-Material::Material(std::string &path) {
+Material::Material() {
 
+}
+
+void Material::loadTexture(std::string &path) {
+    
 }

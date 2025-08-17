@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include "Core/Renderer.h"
+#include "Utils/AssetLoader.h"
 
 #include "Entities/Entity.h"
 
@@ -23,10 +24,17 @@ auto *tf = new Transform();
 extern "C" {
 
 JNIEXPORT void JNICALL
+Java_com_fore_engine_Bridge_NativeBridge_initAssetManager(JNIEnv* env, jclass, jobject assetManager) {
+    AssetLoader::initAssetManager(env, assetManager);
+}
+
+JNIEXPORT void JNICALL
 Java_com_fore_engine_Bridge_NativeBridge_onSurfaceCreated(JNIEnv*, jclass) {
     renderer.init();
 
     entity = Entity();
+
+    entity.loadTexture("a.jpg");
 
     auto *mesh = new MeshComponent();
     entity.addComponent(mesh);
@@ -37,6 +45,8 @@ Java_com_fore_engine_Bridge_NativeBridge_onSurfaceCreated(JNIEnv*, jclass) {
     tf->setScale(5, 5, 5);
 
     entity.isVisible = true;
+    entity.isUseMaterial = true;
+    entity.loadTexture("a.jpg");
 }
 
 JNIEXPORT void JNICALL

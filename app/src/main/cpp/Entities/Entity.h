@@ -5,6 +5,8 @@
 #ifndef FORE_ENTITY_H
 #define FORE_ENTITY_H
 
+#include "../stb/stb_image.h"
+
 #include <unordered_map>
 #include <vector>
 #include <GLES3/gl32.h>
@@ -32,6 +34,7 @@ public:
     std::string description;
 
     bool isVisible;
+    bool isUseMaterial = false;
 
     glm::mat4 model;
 
@@ -47,10 +50,19 @@ public:
     void updateBuffers();
     void draw();
 
+    void loadTexture(const char* path);
+
     glm::vec3 position = glm::vec3(0, 0, 0);;
     glm::vec3 rotation = glm::vec3(0, 0, 0);;
     glm::vec3 scale = glm::vec3(1, 1, 1);
+
+    int width, height, nrChannels;
+
+    unsigned char* data;
 private:
+    GLuint textureID;
+    bool textureLoaded;
+
     int nextKey = 1;
 };
 
