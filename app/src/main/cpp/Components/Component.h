@@ -19,6 +19,9 @@ public:
     std::string title;
     std::string description;
 
+    virtual void onCreate() = 0;
+    virtual void onRender() = 0;
+
     bool isActive;
 };
 

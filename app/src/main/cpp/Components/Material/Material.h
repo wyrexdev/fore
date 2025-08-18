@@ -9,10 +9,18 @@
 
 class Material : public Component {
 public:
-    Material();
+    Material() {};
 
     // For Images
-    void loadTexture(std::string &path);
+    void loadTextureFromAssets(const char *path);
+
+    void onCreate() override;
+    void onRender() override;
+private:
+    int width, height, nrChannels;
+    unsigned char* data;
+
+    const char* path;
 };
 
 

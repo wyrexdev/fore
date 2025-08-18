@@ -6,6 +6,14 @@
 
 #include "../../Entities/Entity.h"
 
+void Transform::onCreate() {
+
+}
+
+void Transform::onRender() {
+
+}
+
 void Transform::setPosition(float x, float y, float z) {
     entity->position = glm::vec3(x, y, z);
 }

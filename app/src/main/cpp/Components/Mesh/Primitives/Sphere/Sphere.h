@@ -13,8 +13,8 @@ class Sphere : public Primitive {
 public:
     Sphere() {
         float radius = 1.0f;
-        int sectorCount = 1028;
-        int stackCount = 512;
+        int sectorCount = 128;
+        int stackCount = 64;
 
         buildSphere(radius, sectorCount, stackCount);
     }

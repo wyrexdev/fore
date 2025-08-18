@@ -14,6 +14,9 @@ public:
     void setPosition(float x, float y, float z);
     void setRotate(float x, float y, float z);
     void setScale(float x, float y, float z);
+
+    void onCreate() override;
+    void onRender() override;
 };
 
 

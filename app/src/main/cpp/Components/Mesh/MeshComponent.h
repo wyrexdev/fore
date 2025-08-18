@@ -17,6 +17,9 @@ public:
     MeshComponent() { type = "MeshComponent"; };
 
     void setMesh(const Primitive *mesh);
+
+    void onCreate() override;
+    void onRender() override;
 };
 
 

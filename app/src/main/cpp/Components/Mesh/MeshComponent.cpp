@@ -6,6 +6,14 @@
 
 #include "../../Entities/Entity.h"
 
+void MeshComponent::onCreate() {
+
+}
+
+void MeshComponent::onRender() {
+
+}
+
 void MeshComponent::setMesh(const Primitive *mesh) {
     entity->vertices = mesh->vertices;
     entity->drawOrder = mesh->drawOrder;

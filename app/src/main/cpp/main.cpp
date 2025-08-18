@@ -16,10 +16,8 @@ static int fps = 0;
 static auto lastTime = std::chrono::high_resolution_clock::now();
 
 static Renderer renderer;
-
-static Entity entity;
-
-auto *tf = new Transform();
+static Camera camera;
+static Camera topMapCamera;
 
 extern "C" {
 
@@ -30,35 +28,26 @@ Java_com_fore_engine_Bridge_NativeBridge_initAssetManager(JNIEnv* env, jclass, j
 
 JNIEXPORT void JNICALL
 Java_com_fore_engine_Bridge_NativeBridge_onSurfaceCreated(JNIEnv*, jclass) {
+    camera = Camera();
+    topMapCamera = Camera();
     renderer.init();
 
-    entity = Entity();
-
-    entity.loadTexture("a.jpg");
-
-    auto *mesh = new MeshComponent();
-    entity.addComponent(mesh);
-    mesh->setMesh(new Sphere());
-
-    entity.addComponent(tf);
-
-    tf->setScale(5, 5, 5);
-
-    entity.isVisible = true;
-    entity.isUseMaterial = true;
-    entity.loadTexture("a.jpg");
+    camera.setPosition(glm::vec3(0.0f, 0.0f, 25.0f));
+    topMapCamera.setRotation(glm::vec3(0, 90, 0));
 }
 
 JNIEXPORT void JNICALL
 Java_com_fore_engine_Bridge_NativeBridge_onSurfaceChanged(JNIEnv*, jclass, jint width, jint height) {
     renderer.resize(width, height);
+    camera.width = width;
+    camera.height = height;
+
+    topMapCamera.width = 50.0f;
+    topMapCamera.height = 50.0f;
 }
 
 JNIEXPORT void JNICALL
 Java_com_fore_engine_Bridge_NativeBridge_onDrawFrame(JNIEnv*, jclass) {
-    renderer.draw();
-    entity.draw();
-
     frames++;
 
     static auto startTime = std::chrono::high_resolution_clock::now();
@@ -72,9 +61,10 @@ Java_com_fore_engine_Bridge_NativeBridge_onDrawFrame(JNIEnv*, jclass) {
         lastTime = now;
     }
 
-    float angle = elapsed.count() * 45.0f;
-    tf->setRotate(angle, 0, 0);
+    float angle = elapsed.count();
 
+    renderer.draw(angle, topMapCamera);
+    renderer.draw(angle, camera);
 }
 
 JNIEXPORT jint JNICALL

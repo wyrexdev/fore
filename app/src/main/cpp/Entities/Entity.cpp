@@ -3,7 +3,6 @@
 //
 
 #include "Entity.h"
-#include "../Utils/AssetLoader.h"
 
 Entity::Entity() {
     glGenVertexArrays(1, &VAO);
@@ -31,6 +30,12 @@ Entity::Entity() {
     vertexShader = compile(GL_VERTEX_SHADER, vertexShaderCode);
     fragmentShader = compile(GL_FRAGMENT_SHADER, fragmentShaderCode);
     shaderProgram = link(vertexShader, fragmentShader);
+
+    for (auto& [type, vec] : components) {
+        for (auto* comp : vec) {
+            comp->onCreate();
+        }
+    }
 }
 
 void Entity::updateBuffers() {
@@ -61,38 +66,15 @@ void Entity::updateBuffers() {
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
+
+    for (auto& [type, vec] : components) {
+        for (auto* comp : vec) {
+            comp->onCreate();
+        }
+    }
 }
 
-void Entity::loadTexture(const char* path) {
-    if (textureLoaded) {
-        glDeleteTextures(1, &textureID);
-    }
-
-    int width, height, nrChannels;
-    unsigned char* data = AssetLoader::loadImageAsset(path, &width, &height, &nrChannels);
-
-    if (!data) {
-        textureLoaded = false;
-        return;
-    }
-
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(data);
-    textureLoaded = true;
-}
-
-void Entity::draw() {
+void Entity::draw(Camera &cam) {
     if (!isVisible) return;
 
     model = glm::mat4(1.0f);
@@ -105,11 +87,17 @@ void Entity::draw() {
 
     model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
 
-    glm::mat4 view = camera.getViewMatrix();
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), Surface::width/Surface::height, 0.1f, 100.0f);
+    glm::mat4 view = cam.getViewMatrix();
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), cam.width/cam.height, 0.1f, 100.0f);
 
     glm::vec3 lightDir = glm::normalize(glm::vec3(0.0f, 3.0f, 0.0f));
     lightDir = glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1,0,0)) * glm::vec4(lightDir, 0.0f);
+
+    for (auto& [type, vec] : components) {
+        for (auto* comp : vec) {
+            comp->onRender();
+        }
+    }
 
     glUseProgram(shaderProgram);
 
@@ -129,11 +117,4 @@ void Entity::draw() {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, drawOrder.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-}
-
-void Entity::addComponent(Component *comp) {
-    int key = nextKey++;
-
-    comp->setEntity(this);
-    components[key] = comp;
 }

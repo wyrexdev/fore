@@ -9,20 +9,22 @@
 
 #include <unordered_map>
 #include <vector>
+#include <typeindex>
+
 #include <GLES3/gl32.h>
 
 #include "../Components/Component.h"
+#include "../Components/Transform/Transform.h"
 
 #include "../Utils/Shader.h"
 #include "../Utils/Surface.h"
+#include "../Utils/AssetLoader.h"
 
 #include "./Objects/Camera.h"
 
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
 #include "../glm/gtc/type_ptr.hpp"
-
-extern Camera camera;
 
 class Entity {
 public:
@@ -33,7 +35,7 @@ public:
     std::string title;
     std::string description;
 
-    bool isVisible;
+    bool isVisible = true;
     bool isUseMaterial = false;
 
     glm::mat4 model;
@@ -44,13 +46,31 @@ public:
     std::vector<float> vertices;
     std::vector<unsigned int> drawOrder;
 
-    std::unordered_map<int, Component*> components;
-    void addComponent(Component *comp);
+    std::unordered_map<std::type_index, std::vector<Component*>> components;
+
+    void addComponent(Component *comp) {
+        components[typeid(*comp)].push_back(comp);
+        comp->setEntity(this);
+    }
+
+    template<typename T>
+    T* getComponent() {
+        auto it = components.find(typeid(T));
+        if (it != components.end() && !it->second.empty())
+            return static_cast<T*>(it->second[0]);
+        return nullptr;
+    }
+
+    template<typename T>
+    T* getComponent(size_t index) {
+        auto it = components.find(typeid(T));
+        if (it != components.end() && index < it->second.size())
+            return static_cast<T*>(it->second[index]);
+        return nullptr;
+    }
 
     void updateBuffers();
-    void draw();
-
-    void loadTexture(const char* path);
+    void draw(Camera &cam);
 
     glm::vec3 position = glm::vec3(0, 0, 0);;
     glm::vec3 rotation = glm::vec3(0, 0, 0);;
@@ -59,11 +79,10 @@ public:
     int width, height, nrChannels;
 
     unsigned char* data;
-private:
+
     GLuint textureID;
     bool textureLoaded;
-
-    int nextKey = 1;
+private:
 };
 
 
