@@ -6,6 +6,9 @@
 #define FORE_SHADER_H
 
 #include <GLES3/gl32.h>
+#include <memory>
+
+#include "../Components/Camera/Camera.h"
 
 static const GLchar* vertexShaderCode =
         "#version 320 es\n"
@@ -93,5 +96,6 @@ static GLuint link(GLuint vs, GLuint fs) {
     return p;
 }
 
+extern std::vector<Camera*> cameras;
 
 #endif //FORE_SHADER_H

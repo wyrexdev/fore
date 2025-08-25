@@ -277,34 +277,41 @@ bool CubeMap::loadCubemap(const std::string& cubemapPath) {
     return true;
 }
 
-void CubeMap::draw(Camera& cam) {
+void CubeMap::draw() {
     if (!isVisible || !cubemapLoaded) {
         return;
     }
 
-    GLint currentDepthFunc;
-    glGetIntegerv(GL_DEPTH_FUNC, &currentDepthFunc);
+    if (!cameras[0]) return;
+    if (!cameras[0]->entity) return;
 
-    glDepthFunc(GL_LEQUAL);
-    glDepthMask(GL_FALSE);
-    
-    glUseProgram(shaderProgram);
+    for(auto &camera : cameras) {
+        glViewport(camera->viewport.x, camera->viewport.y, camera->viewport.z, camera->viewport.w);
 
-    glm::mat4 view = glm::mat4(glm::mat3(cam.getViewMatrix()));
+        GLint currentDepthFunc;
+        glGetIntegerv(GL_DEPTH_FUNC, &currentDepthFunc);
 
-    float aspectRatio = cam.width / cam.height;
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+        glDepthFunc(GL_LEQUAL);
+        glDepthMask(GL_FALSE);
 
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uView"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(proj));
+        glUseProgram(shaderProgram);
 
-    glBindVertexArray(VAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-    glUniform1i(glGetUniformLocation(shaderProgram, "skybox"), 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+        glm::mat4 view = glm::mat4(glm::mat3(camera->getViewMatrix()));
 
-    glDepthMask(GL_TRUE);
-    glDepthFunc(currentDepthFunc);
+        float aspectRatio = camera->viewport.z / camera->viewport.w;
+        glm::mat4 proj = glm::perspective(glm::radians(camera->fieldOfView), aspectRatio, camera->near, camera->far);
+
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uView"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uProj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+        glBindVertexArray(VAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glUniform1i(glGetUniformLocation(shaderProgram, "skybox"), 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        glDepthMask(GL_TRUE);
+        glDepthFunc(currentDepthFunc);
+    }
 }

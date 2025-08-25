@@ -2,7 +2,9 @@
 #define FORE_CUBEMAP_H
 
 #include "../../Entity.h"
+
 #include "../../../Utils/AssetLoader.h"
+#include "../../../Utils/Shader.h"
 
 class CubeMap : public Entity {
 public:
@@ -10,7 +12,7 @@ public:
     ~CubeMap();
 
     bool loadCubemap(const std::string& cubemapPath);
-    void draw(Camera& cam);
+    void draw();
 
 protected:
     GLuint cubemapTexture = 0;

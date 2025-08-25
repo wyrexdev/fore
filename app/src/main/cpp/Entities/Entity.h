@@ -11,6 +11,8 @@
 #include <vector>
 #include <typeindex>
 
+#include <android/log.h>
+
 #include <GLES3/gl32.h>
 
 #include "../Components/Component.h"
@@ -19,8 +21,6 @@
 #include "../Utils/Shader.h"
 #include "../Utils/Surface.h"
 #include "../Utils/AssetLoader.h"
-
-#include "./Objects/Camera.h"
 
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
@@ -70,7 +70,7 @@ public:
     }
 
     void updateBuffers();
-    void draw(Camera &cam);
+    void draw();
 
     glm::vec3 position = glm::vec3(0, 0, 0);;
     glm::vec3 rotation = glm::vec3(0, 0, 0);;
